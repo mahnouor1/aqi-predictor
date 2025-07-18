@@ -1,0 +1,38 @@
+name: ⏱️ Hourly AQI Data Collection
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:     # Allow manual runs
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas requests
+
+      - name: 🧪 Run data collection script
+        run: python data_collection.py
+
+      - name: 💾 Commit updated raw_data.csv
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add raw_data.csv
+          git commit -m "📈 Update raw AQI data"
+          git push
