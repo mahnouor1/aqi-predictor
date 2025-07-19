@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 # ✅ Use GitHub Secret instead of hardcoding
-API_KEY = os.getenv("71a10953-1117-4740-9bf6-799777aec72e")  # This must be set in GitHub Secrets!
+API_KEY = os.getenv("API_KEY")  # This must be set in GitHub Secrets!
 
 def fetch_iqair_data(api_key):
     url = f"http://api.airvisual.com/v2/nearest_city?key={api_key}"
