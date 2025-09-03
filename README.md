@@ -1,16 +1,3 @@
-Here’s both:
-
----
-
-## **Short Repository Description (for GitHub top section)**
-
-> *"A serverless AQI predictor for Karachi using weather + pollutant data. Includes data collection via OpenWeather API, feature engineering, ML model training, and a Streamlit web app to forecast AQI for the next 3 days."*
-
----
-
-## **Full README.md Content**
-
-```markdown
 # 🌫️ AQI Predictor - Karachi
 
 Predict the **Air Quality Index (AQI)** in Karachi for the next **3 days** using weather + pollutant data.  
