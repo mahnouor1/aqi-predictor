@@ -1,0 +1,2 @@
+# aqi-predictor
+A serverless AQI predictor for Karachi using weather + pollutant data. Includes data collection via OpenWeather API, feature engineering, ML model training, and a Streamlit web app to forecast AQI for the next 3 days
