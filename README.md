@@ -108,7 +108,7 @@ This project is **serverless-ready**:
 
 **Mahnoor Umar**
 
-* GitHub: [@your-username](https://github.com/your-username)
+* GitHub: [@mahnouor1](https://github.com/mahnouor1)
 * LinkedIn: *(https://www.linkedin.com/in/mahnoor-umar-a61027226/)*
 
 
