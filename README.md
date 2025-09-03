@@ -35,6 +35,14 @@ aqi-predictor/
 └── README.md
 
 ````
+### App Home
+<img width="797" height="842" alt="image" src="https://github.com/user-attachments/assets/28a44c45-5d63-4715-b3f9-7816d927ea42" />
+
+### Pollutant Form
+<img width="780" height="760" alt="image" src="https://github.com/user-attachments/assets/98fc6dec-4ca3-404a-bfa4-d7690938f04c" />
+
+### Prediction Output
+<img width="783" height="427" alt="image" src="https://github.com/user-attachments/assets/19e85d7b-9133-4fc3-80ae-1932554cbeb5" />
 
 ---
 
