@@ -1,0 +1,184 @@
+name: AQI Predictor CI/CD Pipeline
+
+on:
+  schedule:
+    # Run feature pipeline every hour
+    - cron: '0 * * * *'
+    # Run training pipeline daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: '3.9'
+  DOCKER_IMAGE: aqi-predictor
+  MODEL_REGISTRY_PATH: ./models
+  FEATURE_STORE_PATH: ./feature_store
+
+jobs:
+  # Job 1: Feature Pipeline (runs every hour)
+  feature-pipeline:
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install hopsworks-client mlflow
+
+      - name: Run feature pipeline
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+        run: |
+          python scripts/feature_pipeline.py
+
+      - name: Upload features to artifact store
+        uses: actions/upload-artifact@v3
+        with:
+          name: features-${{ github.run_number }}
+          path: feature_store/
+
+  # Job 2: Model Training Pipeline (runs daily)
+  training-pipeline:
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: feature-pipeline
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install hopsworks-client mlflow xgboost lightgbm shap
+
+      - name: Download features
+        uses: actions/download-artifact@v3
+        with:
+          name: features-${{ github.run_number }}
+          path: feature_store/
+
+      - name: Run training pipeline
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+        run: |
+          python scripts/training_pipeline.py
+
+      - name: Upload trained model
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-${{ github.run_number }}
+          path: models/
+
+  # Job 3: Model Evaluation and Registry
+  model-evaluation:
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: training-pipeline
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install mlflow shap
+
+      - name: Download model
+        uses: actions/download-artifact@v3
+        with:
+          name: model-${{ github.run_number }}
+          path: models/
+
+      - name: Evaluate and register model
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: |
+          python scripts/model_evaluation.py
+
+  # Job 4: Build and Test Docker Image
+  docker-build:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ env.DOCKER_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          docker run --rm ${{ env.DOCKER_IMAGE }}:latest python -c "import streamlit; print('Streamlit works')"
+
+  # Job 5: Deploy to Staging (on push to develop)
+  deploy-staging:
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: [docker-build, model-evaluation]
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment logic here
+
+  # Job 6: Deploy to Production (on push to main)
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: [docker-build, model-evaluation]
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment logic here
+
+  # Job 7: Send notifications
+  notify:
+    if: always()
+    runs-on: ubuntu-latest
+    needs: [feature-pipeline, training-pipeline, model-evaluation, docker-build]
+    steps:
+      - name: Notify on success
+        if: ${{ needs.feature-pipeline.result == 'success' && needs.training-pipeline.result == 'success' }}
+        run: |
+          echo "✅ All pipelines completed successfully!"
+
+      - name: Notify on failure
+        if: ${{ needs.feature-pipeline.result == 'failure' || needs.training-pipeline.result == 'failure' }}
+        run: |
+          echo "❌ Pipeline failed! Check the logs."

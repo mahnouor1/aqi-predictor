@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  aqi-predictor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: aqi-predictor-app
+    ports:
+      - "8501:8501"
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
+      - HOPSWORKS_API_KEY=${HOPSWORKS_API_KEY}
+    volumes:
+      - ./feature_store:/app/feature_store
+      - ./models:/app/models
+      - ./outputs:/app/outputs
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a database for persistent storage
+  postgres:
+    image: postgres:13
+    container_name: aqi-predictor-db
+    environment:
+      - POSTGRES_DB=aqi_predictor
+      - POSTGRES_USER=aqi_user
+      - POSTGRES_PASSWORD=aqi_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  # Optional: Add Redis for caching
+  redis:
+    image: redis:6-alpine
+    container_name: aqi-predictor-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  # Optional: Add MLflow tracking server
+  mlflow:
+    image: python:3.9-slim
+    container_name: aqi-predictor-mlflow
+    command: >
+      bash -c "
+        pip install mlflow psycopg2-binary &&
+        mlflow server 
+        --backend-store-uri postgresql://aqi_user:aqi_password@postgres:5432/aqi_predictor 
+        --default-artifact-root /mlflow/artifacts 
+        --host 0.0.0.0 
+        --port 5000
+      "
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_artifacts:/mlflow/artifacts
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mlflow_artifacts:
+
+networks:
+  default:
+    name: aqi-predictor-network

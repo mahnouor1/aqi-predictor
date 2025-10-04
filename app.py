@@ -44,7 +44,10 @@ month = target_date.month
 
 # --- Predict AQI ---
 if st.button("🔮 Predict AQI"):
+    # Provide all features the model expects (23 features total)
+    # For historical features, use reasonable defaults
     input_df = pd.DataFrame([{
+        # Basic weather and pollutant features (18)
         'temperature_2m': temperature,
         'relative_humidity_2m': humidity,
         'windspeed_10m': windspeed,
@@ -63,6 +66,13 @@ if st.button("🔮 Predict AQI"):
         'hour': hour,
         'day': day,
         'month': month,
+        
+        # Historical features (5) - using defaults for demo
+        'aqi_lag1': 3.0,  # Previous hour AQI
+        'aqi_lag2': 3.0,  # 2 hours ago AQI
+        'aqi_change_rate': 0.0,  # No change
+        'aqi_rolling3': 3.0,  # 3-hour rolling average
+        'aqi_rolling6': 3.0,  # 6-hour rolling average
     }])
 
     prediction = model.predict(input_df)[0]

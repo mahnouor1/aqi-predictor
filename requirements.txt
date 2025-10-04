@@ -1,10 +1,53 @@
-streamlit
-pandas
-numpy
-scikit-learn
-joblib
-python-dateutil
-pytz
-matplotlib
-plotly
-requests
+# Core dependencies
+streamlit>=1.28.0
+pandas>=1.5.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# Data processing
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Visualization
+matplotlib>=3.7.0
+plotly>=5.15.0
+seaborn>=0.12.0
+
+# API and networking
+requests>=2.31.0
+urllib3>=2.0.0
+
+# Machine Learning
+xgboost>=1.7.0
+lightgbm>=4.0.0
+shap>=0.42.0
+
+# Model tracking and registry
+mlflow>=2.5.0
+
+# Feature store (optional)
+# hopsworks-client>=3.0.0  # Commented out - not available for Python 3.10
+
+# Monitoring and logging
+loguru>=0.7.0
+
+# Development and testing
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
+
+# Production
+gunicorn>=21.2.0
+uvicorn>=0.23.0
+fastapi>=0.100.0
+
+# Database
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+
+# Caching
+redis>=4.6.0
+
+# Environment management
+python-dotenv>=1.0.0
