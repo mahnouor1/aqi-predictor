@@ -32,14 +32,63 @@ jobs:
           OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
         run: |
           echo "🌤️ Fetching real-time weather data..."
+          echo "📍 Location: Karachi, Pakistan"
+          echo "⏰ Time: $(date)"
+          echo "🔑 API Key: ${OPENWEATHER_API_KEY:0:8}..." # Show first 8 chars
+          
+          # Create data directory
+          mkdir -p data
+          
+          # Run the PM2.5 fetcher
+          python pm25_fetcher.py
+          
+          # Run feature pipeline
           python scripts/simple_feature_pipeline.py
+          
+          # Show what data was fetched
+          echo "📊 Data files created:"
+          ls -la data/ || echo "No data directory"
+          ls -la feature_store/ || echo "No feature_store directory"
+          
           echo "✅ Real-time data fetched successfully"
 
       - name: Train model with new data
         run: |
           echo "🤖 Training model with latest data..."
+          echo "📈 Features available:"
+          ls -la features.csv || echo "No features.csv"
+          
+          # Run training pipeline
           python scripts/simple_training_pipeline.py
+          
+          # Show model files
+          echo "🎯 Model files:"
+          ls -la *.pkl || echo "No model files"
+          
           echo "✅ Model trained with new data"
+
+      - name: Commit and push new data
+        run: |
+          echo "💾 Committing new data to repository..."
+          
+          # Configure git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Add all new files
+          git add .
+          
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "ℹ️ No new data to commit"
+          else
+            echo "📝 Committing new data..."
+            git commit -m "🔄 Auto-update: Real-time data fetch $(date '+%Y-%m-%d %H:%M:%S')"
+            
+            echo "🚀 Pushing to repository..."
+            git push origin main
+            echo "✅ Data pushed successfully"
+          fi
 
       - name: Deploy to production
         run: |
