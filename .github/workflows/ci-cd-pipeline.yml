@@ -35,7 +35,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install hopsworks-client mlflow
+          pip install mlflow
 
       - name: Run feature pipeline
         env:
@@ -68,7 +68,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install hopsworks-client mlflow xgboost lightgbm shap
+          pip install mlflow xgboost lightgbm shap
 
       - name: Download features
         uses: actions/download-artifact@v4
