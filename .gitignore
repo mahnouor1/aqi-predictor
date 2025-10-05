@@ -11,3 +11,12 @@ __pycache__/
 
 # Ignore system files
 .DS_Store
+
+# Ignore generated data files
+data/
+feature_store/
+models/
+*.csv
+*.json
+!env.example
+!README.md
