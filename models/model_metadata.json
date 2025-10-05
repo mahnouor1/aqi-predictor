@@ -33,9 +33,9 @@
   "metrics": {
     "rmse": 0.0,
     "mae": 0.0,
-    "r2": NaN
+    "r2": 1.0
   },
-  "test_size": 1,
-  "trained_at": "2025-10-05T05:16:41.815997",
+  "test_size": 2,
+  "trained_at": "2025-10-05T05:32:01.637167",
   "model_type": "RandomForestRegressor"
 }
