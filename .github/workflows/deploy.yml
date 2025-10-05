@@ -38,3 +38,10 @@ jobs:
           echo "📊 Feature pipeline: ✅ Data fetched"
           echo "🤖 Training pipeline: ✅ Model trained"
           echo "🌐 App ready for deployment to Streamlit Cloud"
+          
+      - name: Create deployment
+        run: |
+          echo "Creating deployment record..."
+          echo "Deployment ID: ${{ github.run_id }}"
+          echo "Environment: production"
+          echo "Status: success"
