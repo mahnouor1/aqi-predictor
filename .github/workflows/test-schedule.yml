@@ -1,0 +1,32 @@
+name: Test Hourly Schedule
+
+on:
+  schedule:
+    # Run every 5 minutes for testing
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  test-schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test scheduled run
+        run: |
+          echo "🕐 Scheduled run test at $(date)"
+          echo "📍 This should run every 5 minutes"
+          echo "✅ Schedule is working!"
+          
+      - name: Create test file
+        run: |
+          echo "Test run at $(date)" > test-schedule.txt
+          
+      - name: Commit test file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add test-schedule.txt
+          git commit -m "🕐 Test schedule run $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push origin main || echo "Nothing to push"
