@@ -8,11 +8,14 @@ Original file is located at
 """
 
 # fetch_features.py
+import os
 import requests
 import pandas as pd
 from datetime import datetime
 
-API_KEY = "6ba231e87114c1df16cde745209442d4"  # Will be replaced by GitHub secret automatically
+API_KEY = os.getenv('OPENWEATHER_API_KEY')
+if not API_KEY:
+    raise ValueError("OPENWEATHER_API_KEY environment variable is required")
 LAT, LON = 24.8607, 67.0011  # Karachi
 
 # --- Fetch weather data ---

@@ -18,7 +18,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class SimpleFeaturePipeline:
     def __init__(self):
-        self.api_key = os.getenv('OPENWEATHER_API_KEY', '6ba231e87114c1df16cde745209442d4')
+        self.api_key = os.getenv('OPENWEATHER_API_KEY')
+        if not self.api_key:
+            raise ValueError("OPENWEATHER_API_KEY environment variable is required")
         self.lat, self.lon = 24.8607, 67.0011  # Karachi coordinates
         self.feature_store_path = Path('feature_store')
         self.feature_store_path.mkdir(exist_ok=True)
