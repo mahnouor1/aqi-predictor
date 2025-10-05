@@ -1,0 +1,41 @@
+{
+  "features": [
+    "temperature_2m",
+    "windspeed_10m",
+    "winddirection_10m",
+    "relative_humidity_2m",
+    "precipitation",
+    "cloudcover",
+    "surface_pressure",
+    "co",
+    "no",
+    "no2",
+    "o3",
+    "so2",
+    "pm2_5",
+    "pm10",
+    "nh3",
+    "hour",
+    "day",
+    "month",
+    "day_of_week",
+    "is_weekend",
+    "season",
+    "aqi_change_rate",
+    "heat_index",
+    "comfort_index",
+    "pollution_index",
+    "aqi_lag1",
+    "aqi_lag2",
+    "aqi_rolling3",
+    "aqi_rolling6"
+  ],
+  "metrics": {
+    "rmse": 0.0,
+    "mae": 0.0,
+    "r2": NaN
+  },
+  "test_size": 1,
+  "trained_at": "2025-10-05T05:16:41.815997",
+  "model_type": "RandomForestRegressor"
+}

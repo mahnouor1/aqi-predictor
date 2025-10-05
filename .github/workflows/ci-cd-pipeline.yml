@@ -40,9 +40,8 @@ jobs:
       - name: Run feature pipeline
         env:
           OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
-          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
         run: |
-          python scripts/feature_pipeline.py
+          python scripts/simple_feature_pipeline.py
 
       - name: Upload features to artifact store
         uses: actions/upload-artifact@v4
@@ -79,9 +78,8 @@ jobs:
       - name: Run training pipeline
         env:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
         run: |
-          python scripts/training_pipeline.py
+          python scripts/simple_training_pipeline.py
 
       - name: Upload trained model
         uses: actions/upload-artifact@v4
@@ -136,6 +134,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: Dockerfile.simple
           push: false
           tags: ${{ env.DOCKER_IMAGE }}:latest
           cache-from: type=gha
