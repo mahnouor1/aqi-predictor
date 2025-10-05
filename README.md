@@ -18,20 +18,21 @@ This project uses a **100% serverless stack**, machine learning, and a **Streaml
 ## 🗂 Project Structure
 ```
 aqi-predictor/
-├── app.py                   # Streamlit UI
-├── train.py                 # Model training script
-├── fetch_data.py            # Collect and merge weather + pollutant data
-├── requirements.txt         # Dependencies
-├── data/                    # Input & output datasets
-│   ├── features.csv
-│   ├── historical_weather.csv
-│   ├── historical_aqi_openweather.csv
-│   └── merged_weather_aqi.csv
-├── models/
-│   └── aqi_model.pkl        # Trained ML model
-├── notebooks/
-│   └── AQI_Model_Training.ipynb
-└── README.md
+├── app.py                          # 🌐 Streamlit web app
+├── aqi_model.pkl                  # 🤖 Trained ML model  
+├── features.csv                   # 📊 Feature data
+├── pm25_fetcher.py                # 📊 Real-time data fetcher
+├── train.py                       # 🎯 Model training
+├── requirements.txt               # 📦 Dependencies
+├── Dockerfile.simple              # 🐳 Docker config
+├── env.example                    # 🔑 Environment template
+├── README.md                      # 📖 Documentation
+├── .github/workflows/
+│   ├── ci-cd-pipeline.yml         # ⚙️ Main CI/CD
+│   └── real-deploy.yml            # 🚀 Real-time deployment
+└── scripts/
+    ├── simple_feature_pipeline.py # 📊 Feature pipeline
+    └── simple_training_pipeline.py # 🤖 Training pipeline
 ```
 
 ---
