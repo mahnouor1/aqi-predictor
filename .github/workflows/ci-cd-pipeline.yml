@@ -45,7 +45,7 @@ jobs:
           python scripts/feature_pipeline.py
 
       - name: Upload features to artifact store
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: features-${{ github.run_number }}
           path: feature_store/
@@ -71,7 +71,7 @@ jobs:
           pip install hopsworks-client mlflow xgboost lightgbm shap
 
       - name: Download features
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: features-${{ github.run_number }}
           path: feature_store/
@@ -84,7 +84,7 @@ jobs:
           python scripts/training_pipeline.py
 
       - name: Upload trained model
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: model-${{ github.run_number }}
           path: models/
@@ -110,7 +110,7 @@ jobs:
           pip install mlflow shap
 
       - name: Download model
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: model-${{ github.run_number }}
           path: models/

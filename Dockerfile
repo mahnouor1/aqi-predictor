@@ -27,8 +27,7 @@ RUN pip install --no-cache-dir \
     xgboost \
     lightgbm \
     shap \
-    mlflow \
-    hopsworks-client
+    mlflow
 
 # Development stage
 FROM base as development
